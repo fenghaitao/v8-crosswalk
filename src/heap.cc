@@ -2931,6 +2931,46 @@ MaybeObject* Heap::AllocateHeapNumber(double value, PretenureFlag pretenure) {
 }
 
 
+MaybeObject* Heap::AllocateFloat32x4(float32x4_value_t value,
+                                     PretenureFlag pretenure) {
+  // Statically ensure that it is safe to allocate float32x4 objects in paged
+  // spaces.
+  int size = Float32x4::kSize;
+  STATIC_ASSERT(Float32x4::kSize <= Page::kMaxRegularHeapObjectSize);
+
+  AllocationSpace space = SelectSpace(size, OLD_DATA_SPACE, pretenure);
+
+  Object* result;
+  { MaybeObject* maybe_result = AllocateRaw(size, space, OLD_DATA_SPACE);
+    if (!maybe_result->ToObject(&result)) return maybe_result;
+  }
+
+  HeapObject::cast(result)->set_map_no_write_barrier(float32x4_map());
+  Float32x4::cast(result)->set_value(value);
+  return result;
+}
+
+
+MaybeObject* Heap::AllocateInt32x4(int32x4_value_t value,
+                                    PretenureFlag pretenure) {
+  // Statically ensure that it is safe to allocate int32x4 objects in paged
+  // spaces.
+  int size = Int32x4::kSize;
+  STATIC_ASSERT(Int32x4::kSize <= Page::kMaxRegularHeapObjectSize);
+
+  AllocationSpace space = SelectSpace(size, OLD_DATA_SPACE, pretenure);
+
+  Object* result;
+  { MaybeObject* maybe_result = AllocateRaw(size, space, OLD_DATA_SPACE);
+    if (!maybe_result->ToObject(&result)) return maybe_result;
+  }
+
+  HeapObject::cast(result)->set_map_no_write_barrier(int32x4_map());
+  Int32x4::cast(result)->set_value(value);
+  return result;
+}
+
+
 MaybeObject* Heap::AllocateCell(Object* value) {
   int size = Cell::kSize;
   STATIC_ASSERT(Cell::kSize <= Page::kMaxRegularHeapObjectSize);

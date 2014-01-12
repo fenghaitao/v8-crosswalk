@@ -187,6 +187,8 @@ StaticVisitorBase::VisitorId StaticVisitorBase::GetVisitorId(
     case FIXED_UINT32_ARRAY_TYPE:
     case FIXED_INT32_ARRAY_TYPE:
     case FIXED_FLOAT32_ARRAY_TYPE:
+    case FIXED_INT32x4_ARRAY_TYPE:
+    case FIXED_FLOAT32x4_ARRAY_TYPE:
     case FIXED_UINT8_CLAMPED_ARRAY_TYPE:
       return kVisitFixedTypedArray;
 
