@@ -171,6 +171,8 @@ StaticVisitorBase::VisitorId StaticVisitorBase::GetVisitorId(
       return kVisitJSFunction;
 
     case HEAP_NUMBER_TYPE:
+    case FLOAT32x4_TYPE:
+    case INT32x4_TYPE:
 #define EXTERNAL_ARRAY_CASE(Type, type, TYPE, ctype, size)                     \
     case EXTERNAL_##TYPE##_ARRAY_TYPE:
 

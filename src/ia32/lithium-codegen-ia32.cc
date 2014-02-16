@@ -3475,7 +3475,9 @@ void LCodeGen::DoLoadKeyedExternalArray(LLoadKeyed* instr) {
     if (ExternalArrayOpRequiresTemp(instr->hydrogen()->key()->representation(),
                                     elements_kind)) {
       if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
-          elements_kind == EXTERNAL_INT32x4_ELEMENTS) {
+          elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+          elements_kind == FLOAT32x4_ELEMENTS ||
+          elements_kind == INT32x4_ELEMENTS) {
         // Double the index as Float32x4 and Int32x4 need scale 16.
         __ shl(ToRegister(key), 1);
       } else {
@@ -3689,7 +3691,9 @@ Operand LCodeGen::BuildFastArrayOperand(
   }
   int shift_size = element_shift_size;
   if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
-      elements_kind == EXTERNAL_INT32x4_ELEMENTS) {
+      elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+      elements_kind == FLOAT32x4_ELEMENTS ||
+      elements_kind == INT32x4_ELEMENTS) {
     // Double the index and use scale 8. Float32x4 needs scale 16.
     additional_index *= 2;
   }
@@ -3699,7 +3703,9 @@ Operand LCodeGen::BuildFastArrayOperand(
       Abort(kArrayIndexConstantValueTooBig);
     }
     if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
-        elements_kind == EXTERNAL_INT32x4_ELEMENTS) {
+        elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+        elements_kind == FLOAT32x4_ELEMENTS ||
+        elements_kind == INT32x4_ELEMENTS) {
       // Double the index and use scale 8. Float32x4 needs scale 16.
       constant_value *= 2;
     }
@@ -4672,7 +4678,9 @@ void LCodeGen::DoStoreKeyedExternalArray(LStoreKeyed* instr) {
     if (ExternalArrayOpRequiresTemp(instr->hydrogen()->key()->representation(),
                                     elements_kind)) {
       if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
-          elements_kind == EXTERNAL_INT32x4_ELEMENTS) {
+          elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+          elements_kind == FLOAT32x4_ELEMENTS ||
+          elements_kind == INT32x4_ELEMENTS) {
         // Double the index as Float32x4 and Int32x4 need scale 16.
         __ shl(ToRegister(key), 1);
       } else {
@@ -4707,7 +4715,8 @@ void LCodeGen::DoStoreKeyedExternalArray(LStoreKeyed* instr) {
     } else {
       X87Mov(operand, ToX87Register(instr->value()));
     }
-  } else if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS) {
+  } else if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
+      elements_kind == FLOAT32x4_ELEMENTS) {
     if (CpuFeatures::IsSafeForSnapshot(SSE2)) {
       CpuFeatureScope scope(masm(), SSE2);
       __ movups(operand, ToFloat32x4Register(instr->value()));
@@ -4725,7 +4734,8 @@ void LCodeGen::DoStoreKeyedExternalArray(LStoreKeyed* instr) {
         __ mov(Operand(operand, offset), temp);
       }
     }
-  } else if (elements_kind == EXTERNAL_INT32x4_ELEMENTS) {
+  } else if (elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+      elements_kind == INT32x4_ELEMENTS) {
     if (CpuFeatures::IsSafeForSnapshot(SSE2)) {
       CpuFeatureScope scope(masm(), SSE2);
       __ movups(operand, ToInt32x4Register(instr->value()));

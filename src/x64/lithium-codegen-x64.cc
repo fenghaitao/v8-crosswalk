@@ -3065,7 +3065,7 @@ void LCodeGen::DoLoadKeyedExternalArray(LLoadKeyed* instr) {
       case FLOAT32_ELEMENTS:
       case FLOAT64_ELEMENTS:
       case FLOAT32x4_ELEMENTS:
-      case INT32x4_ELEMENTS;
+      case INT32x4_ELEMENTS:
       case FAST_ELEMENTS:
       case FAST_SMI_ELEMENTS:
       case FAST_DOUBLE_ELEMENTS:
@@ -3192,7 +3192,9 @@ Operand LCodeGen::BuildFastArrayOperand(
   Register elements_pointer_reg = ToRegister(elements_pointer);
   int shift_size = ElementsKindToShiftSize(elements_kind);
   if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
-      elements_kind == EXTERNAL_INT32x4_ELEMENTS) {
+      elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+      elements_kind == FLOAT32x4_ELEMENTS ||
+      elements_kind == INT32x4_ELEMENTS) {
     // Double the index and use scale 8. Float32x4 and Int32x4 need scale 16.
     additional_index *= 2;
   }
@@ -3202,7 +3204,9 @@ Operand LCodeGen::BuildFastArrayOperand(
       Abort(kArrayIndexConstantValueTooBig);
     }
     if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
-        elements_kind == EXTERNAL_INT32x4_ELEMENTS) {
+        elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+        elements_kind == FLOAT32x4_ELEMENTS ||
+        elements_kind == INT32x4_ELEMENTS) {
       // Double the index and use scale 8. Float32x4 and Int32x4 need scale 16.
       constant_value *= 2;
     }
@@ -5002,7 +5006,9 @@ void LCodeGen::DoStoreKeyedExternalArray(LStoreKeyed* instr) {
     }
 
     if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
-        elements_kind == EXTERNAL_INT32x4_ELEMENTS) {
+        elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+        elements_kind == FLOAT32x4_ELEMENTS ||
+        elements_kind == INT32x4_ELEMENTS) {
       // Double the index and use scale 8. Float32x4 and Int32x4 need scale 16.
       __ shl(key_reg, Immediate(0x1));
     }
@@ -5023,15 +5029,17 @@ void LCodeGen::DoStoreKeyedExternalArray(LStoreKeyed* instr) {
     __ cvtsd2ss(value, value);
     __ movss(operand, value);
   } else if (elements_kind == EXTERNAL_FLOAT64_ELEMENTS ||
-             elements_kind == FLOAT64_ELEMENTS) {
+      elements_kind == FLOAT64_ELEMENTS) {
     __ movsd(operand, ToDoubleRegister(instr->value()));
-  } else if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS) {
+  } else if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
+      elements_kind == FLOAT32x4_ELEMENTS) {
     __ movups(operand, ToFloat32x4Register(instr->value()));
     if (!key->IsConstantOperand()) {
       // Restore the index register.
       __ shr(ToRegister(key), Immediate(0x1));
     }
-  } else if (elements_kind == EXTERNAL_INT32x4_ELEMENTS) {
+  } else if (elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+      elements_kind == INT32x4_ELEMENTS) {
     __ movups(operand, ToInt32x4Register(instr->value()));
     if (!key->IsConstantOperand()) {
       // Restore the index register.
@@ -5066,6 +5074,8 @@ void LCodeGen::DoStoreKeyedExternalArray(LStoreKeyed* instr) {
       case EXTERNAL_FLOAT64_ELEMENTS:
       case FLOAT32_ELEMENTS:
       case FLOAT64_ELEMENTS:
+      case FLOAT32x4_ELEMENTS:
+      case INT32x4_ELEMENTS:
       case FAST_ELEMENTS:
       case FAST_SMI_ELEMENTS:
       case FAST_DOUBLE_ELEMENTS:

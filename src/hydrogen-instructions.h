@@ -6981,10 +6981,12 @@ class HLoadKeyed V8_FINAL
           elements_kind == FLOAT32_ELEMENTS ||
           elements_kind == FLOAT64_ELEMENTS) {
         set_representation(Representation::Double());
-      } else if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS) {
+      } else if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
+                 elements_kind == FLOAT32x4_ELEMENTS) {
         set_representation(CpuFeatures::IsSupported(SSE2) ?
             Representation::Float32x4() : Representation::Tagged());
-      } else if (elements_kind == EXTERNAL_INT32x4_ELEMENTS) {
+      } else if (elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+                 elements_kind == INT32x4_ELEMENTS) {
         set_representation(CpuFeatures::IsSupported(SSE2) ?
             Representation::Int32x4() : Representation::Tagged());
       } else {
