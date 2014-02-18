@@ -3474,15 +3474,14 @@ void LCodeGen::DoLoadKeyedExternalArray(LLoadKeyed* instr) {
   if (!key->IsConstantOperand()) {
     if (ExternalArrayOpRequiresTemp(instr->hydrogen()->key()->representation(),
                                     elements_kind)) {
-      if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
-          elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
-          elements_kind == FLOAT32x4_ELEMENTS ||
-          elements_kind == INT32x4_ELEMENTS) {
-        // Double the index as Float32x4 and Int32x4 need scale 16.
-        __ shl(ToRegister(key), 1);
-      } else {
         __ SmiUntag(ToRegister(key));
       }
+    if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
+        elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+        elements_kind == FLOAT32x4_ELEMENTS ||
+        elements_kind == INT32x4_ELEMENTS) {
+      // Double the index as Float32x4 and Int32x4 need scale 16.
+      __ shl(ToRegister(key), 1);
     }
   }
 
@@ -3533,6 +3532,10 @@ void LCodeGen::DoLoadKeyedExternalArray(LLoadKeyed* instr) {
                tmp);
       }
     }
+    if (!key->IsConstantOperand()) {
+      // Restore the index register.
+      __ shr(ToRegister(key), 1);
+    }
   } else if (elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
              elements_kind == INT32x4_ELEMENTS) {
     if (CpuFeatures::IsSupported(SSE2)) {
@@ -3553,6 +3556,10 @@ void LCodeGen::DoLoadKeyedExternalArray(LLoadKeyed* instr) {
         __ mov(tmp, Operand(operand, offset));
         __ mov(Operand(FieldOperand(reg, Int32x4::kValueOffset), offset), tmp);
       }
+    }
+    if (!key->IsConstantOperand()) {
+      // Restore the index register.
+      __ shr(ToRegister(key), 1);
     }
   } else {
     Register result(ToRegister(instr->result()));
@@ -4677,15 +4684,14 @@ void LCodeGen::DoStoreKeyedExternalArray(LStoreKeyed* instr) {
   if (!key->IsConstantOperand()) {
     if (ExternalArrayOpRequiresTemp(instr->hydrogen()->key()->representation(),
                                     elements_kind)) {
-      if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
-          elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
-          elements_kind == FLOAT32x4_ELEMENTS ||
-          elements_kind == INT32x4_ELEMENTS) {
-        // Double the index as Float32x4 and Int32x4 need scale 16.
-        __ shl(ToRegister(key), 1);
-      } else {
         __ SmiUntag(ToRegister(key));
-      }
+    }
+    if (elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
+        elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
+        elements_kind == FLOAT32x4_ELEMENTS ||
+        elements_kind == INT32x4_ELEMENTS) {
+      // Double the index as Float32x4 and Int32x4 need scale 16.
+      __ shl(ToRegister(key), 1);
     }
   }
 
@@ -4734,6 +4740,10 @@ void LCodeGen::DoStoreKeyedExternalArray(LStoreKeyed* instr) {
         __ mov(Operand(operand, offset), temp);
       }
     }
+    if (!key->IsConstantOperand()) {
+      // Restore the index register.
+      __ shr(ToRegister(key), 1);
+    }
   } else if (elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
       elements_kind == INT32x4_ELEMENTS) {
     if (CpuFeatures::IsSafeForSnapshot(SSE2)) {
@@ -4752,6 +4762,10 @@ void LCodeGen::DoStoreKeyedExternalArray(LStoreKeyed* instr) {
             Operand(FieldOperand(input_reg, Int32x4::kValueOffset), offset));
         __ mov(Operand(operand, offset), temp);
       }
+    }
+    if (!key->IsConstantOperand()) {
+      // Restore the index register.
+      __ shr(ToRegister(key), 1);
     }
   } else {
     Register value = ToRegister(instr->value());

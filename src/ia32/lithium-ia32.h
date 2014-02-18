@@ -1777,12 +1777,8 @@ inline static bool ExternalArrayOpRequiresTemp(
       (elements_kind == EXTERNAL_INT8_ELEMENTS ||
        elements_kind == EXTERNAL_UINT8_ELEMENTS ||
        elements_kind == EXTERNAL_UINT8_CLAMPED_ELEMENTS ||
-       elements_kind == EXTERNAL_FLOAT32x4_ELEMENTS ||
-       elements_kind == EXTERNAL_INT32x4_ELEMENTS ||
        elements_kind == UINT8_ELEMENTS ||
        elements_kind == INT8_ELEMENTS ||
-       elements_kind == FLOAT32x4_ELEMENTS ||
-       elements_kind == INT32x4_ELEMENTS ||
        elements_kind == UINT8_CLAMPED_ELEMENTS);
 }
 
