@@ -25,58 +25,57 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-// CPU specific code for ia32 independent of OS goes here.
+// Flags: --simd_object --allow-natives-syntax
 
-#ifdef __GNUC__
-#include "third_party/valgrind/valgrind.h"
-#endif
-
-#include "v8.h"
-
-#if V8_TARGET_ARCH_IA32
-
-#include "cpu.h"
-#include "macro-assembler.h"
-
-namespace v8 {
-namespace internal {
-
-void CPU::SetUp() {
-  CpuFeatures::Probe();
+function testObject() {
+  var a = SIMD.float32x4.zero();
+  var b = Object(a);
+  assertEquals(0, b.x);
+  assertEquals(0, b.y);
+  assertEquals(0, b.z);
+  assertEquals(0, b.w);
+  assertEquals(typeof(b), "object");
+  assertEquals(typeof(b.valueOf()), "float32x4");
+  assertEquals(Object.prototype.toString.call(b), "[object float32x4]");
 }
 
+testObject();
+testObject();
+%OptimizeFunctionOnNextCall(testObject);
+testObject();
 
-bool CPU::SupportsCrankshaft() {
-  return CpuFeatures::IsSupported(SSE2);
+
+function testNumber() {
+  var a = SIMD.float32x4.zero();
+  var b = Number(a);
+  assertEquals(NaN, b);
 }
 
+testNumber();
+testNumber();
+%OptimizeFunctionOnNextCall(testNumber);
+testNumber();
 
-bool CPU::SupportsSIMD128InCrankshaft() {
-  return false;
+
+function testString() {
+  var a = SIMD.float32x4.zero();
+  var b = String(a);
+  assertEquals("float32x4(0,0,0,0)", b);
 }
 
+testString();
+testString();
+%OptimizeFunctionOnNextCall(testString);
+testString();
 
-void CPU::FlushICache(void* start, size_t size) {
-  // No need to flush the instruction cache on Intel. On Intel instruction
-  // cache flushing is only necessary when multiple cores running the same
-  // code simultaneously. V8 (and JavaScript) is single threaded and when code
-  // is patched on an intel CPU the core performing the patching will have its
-  // own instruction cache updated automatically.
 
-  // If flushing of the instruction cache becomes necessary Windows has the
-  // API function FlushInstructionCache.
-
-  // By default, valgrind only checks the stack for writes that might need to
-  // invalidate already cached translated code.  This leads to random
-  // instability when code patches or moves are sometimes unnoticed.  One
-  // solution is to run valgrind with --smc-check=all, but this comes at a big
-  // performance cost.  We can notify valgrind to invalidate its cache.
-#ifdef VALGRIND_DISCARD_TRANSLATIONS
-  unsigned res = VALGRIND_DISCARD_TRANSLATIONS(start, size);
-  USE(res);
-#endif
+function testBoolean() {
+  var a = SIMD.float32x4.zero();
+  var b = Boolean(a);
+  assertEquals(true, b);
 }
 
-} }  // namespace v8::internal
-
-#endif  // V8_TARGET_ARCH_IA32
+testBoolean();
+testBoolean();
+%OptimizeFunctionOnNextCall(testBoolean);
+testBoolean();
