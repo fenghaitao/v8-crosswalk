@@ -227,6 +227,11 @@ typedef byte* Address;
 
 struct float32x4_value_t { float storage[4]; };
 struct int32x4_value_t { int32_t storage[4]; };
+union xmm_value_t {
+  double d[2];
+  float32x4_value_t f;
+  int32x4_value_t u;
+};
 
 const int KB = 1024;
 const int MB = KB * KB;

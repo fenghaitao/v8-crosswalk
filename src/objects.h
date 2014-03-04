@@ -2012,7 +2012,6 @@ class Int32x4: public HeapObject {
   static inline int kRuntimeAllocatorId();
   static inline int kMapRootIndex();
 
-  // [value]: int32x4 value.
   inline int32x4_value_t value();
   inline void set_value(int32x4_value_t value);
 
@@ -6794,16 +6793,102 @@ class Script: public Struct {
   V(Math, min, MathMin)                             \
   V(Math, imul, MathImul)
 
+#define EXPERIMENTAL_SIMD_FUNCTIONS_WITH_ID_LIST(V) \
+  V(SIMD, float32x4, Float32x4Constructor)                          \
+  V(SIMD, int32x4, Int32x4Constructor)                              \
+  V(SIMD.float32x4, abs, SIMDAbs)                                   \
+  V(SIMD.float32x4, neg, SIMDNeg)                                   \
+  V(SIMD.float32x4, add, SIMDAdd)                                   \
+  V(SIMD.float32x4, sub, SIMDSub)                                   \
+  V(SIMD.float32x4, mul, SIMDMul)                                   \
+  V(SIMD.float32x4, div, SIMDDiv)                                   \
+  V(SIMD.float32x4, clamp, SIMDClamp)                               \
+  V(SIMD.float32x4, min, SIMDMin)                                   \
+  V(SIMD.float32x4, max, SIMDMax)                                   \
+  V(SIMD.float32x4, reciprocal, SIMDReciprocal)                     \
+  V(SIMD.float32x4, reciprocalSqrt, SIMDReciprocalSqrt)             \
+  V(SIMD.float32x4, scale, SIMDScale)                               \
+  V(SIMD.float32x4, sqrt, SIMDSqrt)                                 \
+  V(SIMD.float32x4, shuffle, SIMDShuffle)                           \
+  V(SIMD.float32x4, shuffleMix, SIMDShuffleMix)                     \
+  V(SIMD.float32x4, withX, SIMDWithX)                               \
+  V(SIMD.float32x4, withY, SIMDWithY)                               \
+  V(SIMD.float32x4, withZ, SIMDWithZ)                               \
+  V(SIMD.float32x4, withW, SIMDWithW)                               \
+  V(SIMD.float32x4, lessThan, SIMDLessThan)                         \
+  V(SIMD.float32x4, lessThanOrEqual, SIMDLessThanOrEqual)           \
+  V(SIMD.float32x4, equal, SIMDEqual)                               \
+  V(SIMD.float32x4, notEqual, SIMDNotEqual)                         \
+  V(SIMD.float32x4, greaterThanOrEqual, SIMDGreaterThanOrEqual)     \
+  V(SIMD.float32x4, greaterThan, SIMDGreaterThan)                   \
+  V(SIMD.float32x4, bitsToInt32x4, SIMDBitsToInt32x4)               \
+  V(SIMD.float32x4, toInt32x4, SIMDToInt32x4)                       \
+  V(SIMD.int32x4, and, SIMDAnd)                                     \
+  V(SIMD.int32x4, or, SIMDOr)                                       \
+  V(SIMD.int32x4, xor, SIMDXor)                                     \
+  V(SIMD.int32x4, not, SIMDNot)                                     \
+  V(SIMD.int32x4, neg, SIMDNegU32)                                  \
+  V(SIMD.int32x4, add, SIMDAddU32)                                  \
+  V(SIMD.int32x4, sub, SIMDSubU32)                                  \
+  V(SIMD.int32x4, mul, SIMDMulU32)                                  \
+  V(SIMD.int32x4, select, SIMDSelect)                               \
+  V(SIMD.int32x4, shuffle, SIMDShuffleU32)                          \
+  V(SIMD.int32x4, withX, SIMDWithXu32)                              \
+  V(SIMD.int32x4, withY, SIMDWithYu32)                              \
+  V(SIMD.int32x4, withZ, SIMDWithZu32)                              \
+  V(SIMD.int32x4, withW, SIMDWithWu32)                              \
+  V(SIMD.int32x4, withFlagX, SIMDWithFlagX)                         \
+  V(SIMD.int32x4, withFlagY, SIMDWithFlagY)                         \
+  V(SIMD.int32x4, withFlagZ, SIMDWithFlagZ)                         \
+  V(SIMD.int32x4, withFlagW, SIMDWithFlagW)                         \
+  V(SIMD.int32x4, bitsToFloat32x4, SIMDBitsToFloat32x4)             \
+  V(SIMD.int32x4, toFloat32x4, SIMDToFloat32x4)                     \
+  V(SIMD.int32x4, equal, SIMDEqualU32)                              \
+  V(SIMD.int32x4, greaterThan, SIMDGreaterThanU32)                  \
+  V(SIMD.int32x4, shiftLeft, SIMDShiftLeftU32)                      \
+  V(SIMD.int32x4, shiftRight, SIMDShiftRightU32)                    \
+  V(SIMD.int32x4, shiftRightArithmetic, SIMDShiftRightArithmeticU32)\
+  V(SIMD.float32x4, zero, Float32x4Zero)                            \
+  V(SIMD.float32x4, splat, Float32x4Splat)                          \
+  V(SIMD.int32x4, zero, Int32x4Zero)                                \
+  V(SIMD.int32x4, bool, Int32x4Bool)                                \
+  V(SIMD.int32x4, splat, Int32x4Splat)                              \
+  V(Float32x4Array.prototype, getAt, Float32x4ArrayGetAt)           \
+  V(Float32x4Array.prototype, setAt, Float32x4ArraySetAt)           \
+  V(Int32x4Array.prototype, getAt, Int32x4ArrayGetAt)               \
+  V(Int32x4Array.prototype, setAt, Int32x4ArraySetAt)
+
+
+#define EXPERIMENTAL_SIMD_FUNCTIONS_WITH_FAKE_ID_LIST(V)      \
+  V(SIMD, unreachable, Float32x4OrInt32x4Unreachable)         \
+  V(SIMD, change, Float32x4OrInt32x4Change)                   \
+  V(SIMD.int32x4.prototype, signMask, Int32x4SignMask)        \
+  V(SIMD.int32x4.prototype, x, Int32x4X)                      \
+  V(SIMD.int32x4.prototype, y, Int32x4Y)                      \
+  V(SIMD.int32x4.prototype, z, Int32x4Z)                      \
+  V(SIMD.int32x4.prototype, w, Int32x4W)                      \
+  V(SIMD.int32x4.prototype, flagX, Int32x4FlagX)              \
+  V(SIMD.int32x4.prototype, flagY, Int32x4FlagY)              \
+  V(SIMD.int32x4.prototype, flagZ, Int32x4FlagZ)              \
+  V(SIMD.int32x4.prototype, flagW, Int32x4FlagW)              \
+  V(SIMD.float32x4.prototype, signMask, Float32x4SignMask)    \
+  V(SIMD.float32x4.prototype, x, Float32x4X)                  \
+  V(SIMD.float32x4.prototype, y, Float32x4Y)                  \
+  V(SIMD.float32x4.prototype, z, Float32x4Z)                  \
+  V(SIMD.float32x4.prototype, w, Float32x4W)
 
 enum BuiltinFunctionId {
   kArrayCode,
 #define DECLARE_FUNCTION_ID(ignored1, ignore2, name)    \
   k##name,
   FUNCTIONS_WITH_ID_LIST(DECLARE_FUNCTION_ID)
-#undef DECLARE_FUNCTION_ID
   // Fake id for a special case of Math.pow. Note, it continues the
   // list of math functions.
-  kMathPowHalf
+  kMathPowHalf,
+  EXPERIMENTAL_SIMD_FUNCTIONS_WITH_ID_LIST(DECLARE_FUNCTION_ID)
+  EXPERIMENTAL_SIMD_FUNCTIONS_WITH_FAKE_ID_LIST(DECLARE_FUNCTION_ID)
+#undef DECLARE_FUNCTION_ID
+  kNumberOfBuiltinFunction
 };
 
 
