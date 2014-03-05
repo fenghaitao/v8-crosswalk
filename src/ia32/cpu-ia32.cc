@@ -52,7 +52,7 @@ bool CPU::SupportsCrankshaft() {
 
 
 bool CPU::SupportsSIMD128InCrankshaft() {
-  return false;
+  return CpuFeatures::IsSupported(SSE2);
 }
 
 
